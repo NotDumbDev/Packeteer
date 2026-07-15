@@ -1,0 +1,34 @@
+---
+title: Packet Event
+---
+import { Aside } from '@astrojs/starlight/components';
+
+
+This page covers the API Reference for the 'PacketEvent' instance.
+
+## `Fire()`
+Sends data to the opposite side.
+
+**Signature**
+```lua
+PacketEvent:Fire(recipient: Player | {Player} | nil, parameters: T)
+```
+
+**Paramaters**
+- recipient - Sends to one player or if a table of players is passed it sends to all the players inside the table.
+- parameters - Event Data
+
+
+## `Connect()`
+Creates a listener for incoming packets.
+
+**Signature**
+```lua
+PacketEvent:Connect(callback: (Player, T) -> ()): RBXScriptConnection?
+```
+
+**Paramaters**
+- callback - Function called when packet is received
+
+**Returns**
+[`RBXScriptConnection`](https://create.roblox.com/docs/reference/engine/datatypes/RBXScriptConnection)

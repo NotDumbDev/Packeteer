@@ -1,0 +1,57 @@
+---
+title: Creating Unreliable Packet Events
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Unreliable Packet Events are a lightweight alternative to Packet Events.
+
+They use the same API as [Packet Events](../../packetevents/creating-events), but do not guarantee that every packet will arrive. This makes them useful for frequently changing data where the newest information is more important than receiving every update.
+
+Examples include:
+
+- Player movement
+- Aim direction
+- Camera updates
+- Temporary visual effects
+
+<Aside type="caution" title="When not to use Unreliable Packet Events">
+	Do not use Unreliable Packet Events for important game state such as:
+	
+	- Inventory changes
+	- Purchases
+	- Damage calculations
+	- Player progression
+
+	Use regular Packet Events or Packet Functions when the data must always arrive.
+</Aside>
+
+## Creating an Unreliable Packet Event
+
+Unreliable Packet Events are created inside a network schema using `Packeteer.unreliable()`.
+
+```lua
+local Packeteer = require(path.to.Packeteer)
+
+return Packeteer.create({
+	Server = {
+		UpdatePosition = Packeteer.unreliable<<{
+			position: Vector3
+		}>>(),
+	},
+
+	Client = {
+		UpdateAim = Packeteer.unreliable<<{
+			direction: Vector3
+		}>>(),
+	},
+})
+```
+After creating an Unreliable Packet Event, the usage is identical to a normal [Packet Event](../../packetevents/creating-events)
+
+For information about:
+- Event ownership
+- Firing events
+- Listening to events
+
+see the [Packet Event Documentation](../../packetevents/creating-events)

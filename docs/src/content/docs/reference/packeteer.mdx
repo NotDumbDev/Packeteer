@@ -1,0 +1,84 @@
+---
+title: Packeteer
+---
+import { Aside } from '@astrojs/starlight/components';
+
+
+This page covers the API Reference for the 'Packeteer' instance.
+
+## `create()`
+Creates a Packeteer network instance from a schema.
+
+**Signature**
+```lua
+Packeteer.create<Server, Client>(schema: NetworkSchema<Server, Client>): Packeteer<Server, Client>
+```
+
+**Paramaters**
+- schema - The network schema containing Server and Client packets
+
+**Returns**
+Returns a PacketeerInstance containing:
+- Network.Server
+- Network.Client
+
+## `initializeServer()`
+Loads all network schemas inside a folder.
+
+**Signature**
+```lua
+Packeteer.initializeServer(networkingFolder: Folder)
+```
+
+**Paramaters**
+- schema - Folder containing schema ModuleScripts
+
+<Aside> 
+This function must only be called on the server.
+
+Calling it from the client will produce an environment warning.
+</Aside>
+
+## `event()`
+Creates a reliable Packet Event.
+
+**Signature**
+```lua
+Packeteer.event<T>(): PacketEvent<T>
+```
+
+**Generic Parameters**
+- T - Data sent through the event
+
+**Returns**
+Returns a PacketEvent
+
+## `packetFunction()`
+Creates a promise-based Packet Function.
+
+**Signature**
+```lua
+Packeteer.packetFunction<T, R>(): PacketFunction<T, R>
+```
+
+**Generic Parameters**
+- T - Arguments sent to the function
+- R - Returned value
+
+**Returns**
+Returns a PacketFunction
+
+## `unreliable()`
+Creates an unreliable Packet Event.
+
+**Signature**
+```lua
+Packeteer.unreliable<T>(): UnreliablePacketEvent<T>
+```
+
+**Generic Parameters**
+- T - Data sent through the event
+
+**Returns**
+Returns a UnreliablePacketEvent
+

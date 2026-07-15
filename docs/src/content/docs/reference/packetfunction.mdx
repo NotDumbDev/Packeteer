@@ -1,0 +1,36 @@
+---
+title: Packet Function
+---
+import { Aside } from '@astrojs/starlight/components';
+
+
+This page covers the API Reference for the 'PacketFunction' instance.
+
+## `Invokes()`
+Invokes a Packet Function.
+
+**Signature**
+```lua
+PacketFunction:Invoke(recipient: Player?, parameters: T): Promise<R>
+```
+
+**Paramaters**
+- recipient - Player receiving the request.
+- parameters - Function arguments
+
+**Returns**
+A Promise resolving to `R`.
+
+## `SetCallback()`
+Assigns the function handler.
+
+**Signature**
+```lua
+PacketFunction:SetCallback(callback: (Player?, T) -> R): PacketFunction<T, R>
+```
+
+**Paramaters**
+- callback - Function executed when invoked
+
+**Returns**
+Returns [self](.), allowing chaining.

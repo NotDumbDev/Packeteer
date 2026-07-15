@@ -1,0 +1,116 @@
+---
+title: Firing Packet Events
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Firing a Packet Event sends data from the owner of the packet to the opposite side.
+
+The way an event is fired depends on whether the packet is server-owned or client-owned.
+
+## Firing Server-Owned Events
+
+Server-owned events are fired from the server and received by the client.
+
+Example schema:
+
+```lua
+Server = {
+    OpenRewardMenu = Packeteer.event<<{
+        rewardId: number
+    }>>(),
+}
+```
+
+To fire a server-owned event, use `:Fire()` from the server:
+
+```lua
+Network.Server.OpenRewardMenu:Fire(player, {
+    rewardId = 123
+})
+```
+The first argument is the recipient of the event.
+
+You can send an event to a single player:
+
+```lua
+Network.Server.OpenRewardMenu:Fire(player, {
+    rewardId = 123
+})
+```
+
+Or multiple players:
+
+```lua
+-- Using Players:GetPlayers()
+Network.Server.OpenRewardMenu:Fire(Players:GetPlayers(), {
+    rewardId = 123
+})
+
+-- Using a table
+Network.Server.OpenRewardMenu:Fire({ player1, player2 }, {
+    rewardId = 123
+})
+
+```
+
+The receiving client will only receive the event data:
+
+```lua
+Network.Server.OpenRewardMenu:Connect(function(data)
+    print(data.rewardId)
+end)
+```
+
+## Firing Client-Owned Events
+Client-owned events are fired from the client and received by the server.
+
+Example schema:
+
+```lua
+Client = {
+    EquipItem = Packeteer.event<<{
+        itemId: string
+    }>>(),
+}
+```
+
+To fire a client-owned event, use `:Fire()` from the client:
+
+```lua
+Network.Client.EquipItem:Fire(nil, {
+    itemId = "Sword"
+})
+```
+
+<Aside type="caution" title="Client Event Arguments">
+	Due to Luau's current type system limitations, client-owned events require
+	a `nil` placeholder as the first argument when firing.
+
+	Packeteer cannot automatically transform the event argument types based on
+	the direction of the packet like TypeScript-based networking libraries can.
+
+	```lua
+	Network.Client.EquipItem:Fire(nil, {
+		itemId = "Sword"
+	})
+	```
+
+	The server will still receive the sending `Player` automatically:
+
+	```lua
+	Network.Client.EquipItem:Connect(function(player, data)
+		print(player.Name, data.itemId)
+	end)
+	```
+</Aside>
+
+The server receives the player who fired the event automatically:
+```lua
+Network.Client.EquipItem:Connect(function(player, data)
+    print(player.Name)
+    print(data.itemId)
+end)
+```
+
+<Aside>A Packet Event does not wait for a response. If you need to send data and receive a result, use a Packet Function instead.</Aside>

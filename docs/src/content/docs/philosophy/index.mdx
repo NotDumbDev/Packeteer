@@ -1,0 +1,57 @@
+---
+title: Philosophy
+---
+
+Packeteer is designed around three main principles:
+
+## Type Safety First
+
+Networking code is often one of the hardest parts of a Roblox project to maintain.
+
+Traditional RemoteEvents and RemoteFunctions provide no knowledge about what data is being sent, which can lead to:
+
+- Incorrect arguments being passed
+- Client/server mismatches
+- Runtime errors that could have been caught earlier
+
+Packeteer solves this by defining your network structure once and generating a fully typed API around it.
+
+```lua
+Network.Server.OpenRewardMenu:Fire(player, {
+	rewardId = 123
+})
+```
+The arguments above are checked by Luau's type checker before the game runs.
+
+## Minimal Boilerplate
+Packeteer aims to remove repetitive networking code while keeping the API familiar.
+
+Instead of manually creating RemoteEvents, finding instances, and managing connections, you define your packets in a schema:
+
+```lua
+return Packeteer.create({
+	Server = {
+		OpenRewardMenu = Packeteer.event<<{
+			rewardId: number
+		}>>()
+	}
+})
+```
+Packeteer handles the underlying networking setup automatically.
+
+## Explicit Server and Client Ownership
+Every packet belongs to either the server or client.
+
+```lua
+Server = {
+	-- Server -> Client packets
+}
+
+Client = {
+	-- Client -> Server packets
+}
+```
+This makes packet direction clear and prevents accidental misuse.
+
+---
+Packeteer is not designed to hide networking concepts completely. Instead, it provides a structured and typed layer on top of Roblox networking primitives.

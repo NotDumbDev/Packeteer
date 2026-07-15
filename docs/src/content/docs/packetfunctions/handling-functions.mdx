@@ -1,0 +1,30 @@
+---
+title: Handling Packet Functions
+---
+
+Every Packet Function requires a callback before it can receive requests.
+
+Callbacks are assigned using `:SetCallback()`.
+
+## Server Callbacks
+
+Server-owned functions are handled by the server.
+
+```lua
+Network.Server.RequestData:SetCallback(function(player, data)
+	return {
+		name = player.Name,
+		score = 100
+	}
+end)
+```
+The server callback receives the sending `Player` as the first argument.
+
+## Client Callbacks
+Client-owned functions are handled by the client.
+```lua
+Network.Client.GetPing:SetCallback(function(data)
+	return 50
+end)
+```
+Client callbacks do not receive a Player argument because the caller is always the server.

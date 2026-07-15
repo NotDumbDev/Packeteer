@@ -1,0 +1,100 @@
+---
+title: Network Schema
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A Network Schema is the blueprint that defines all packets available between the server and client.
+
+The schema describes:
+
+- Which packets exist
+- Who owns each packet
+- What data each packet sends
+- What data functions return
+
+Packeteer uses this schema to create the networking layer automatically.
+
+## Why use a schema?
+
+Roblox networking normally requires manually creating and managing RemoteEvents and RemoteFunctions.
+
+Example (via code):
+
+```lua
+local RemoteEvent = Instance.new("RemoteEvent")
+RemoteEvent.Name = "OpenRewardMenu"
+RemoteEvent.Parent = ReplicatedStorage
+```
+
+This does not describe:
+- What data is sent
+- Who should receive it
+- What arguments are required
+
+Packeteer replaces this with a typed schema:
+
+```lua
+return Packeteer.create({
+	Server = {
+		OpenRewardMenu = Packeteer.event<<{
+			rewardId: number
+		}>>(),
+	}
+})
+```
+The schema becomes the single source of truth for your networking structure.
+
+## Schema Structure
+A schema always contains two sections:
+
+```lua
+Packeteer.create({
+	Server = {},
+	Client = {},
+})
+```
+These sections define packet ownership.
+
+## Why use structured packet data?
+
+
+Packeteer packets use tables to describe their data instead of separate positional arguments.
+
+Example:
+
+```lua
+Packeteer.event<<{
+	message: string,
+	playerId: number
+}>>()
+```
+Instead of:
+
+```lua
+Packeteer.event<<string, number>>()
+```
+
+Using structured data provides several advantages:
+- Clearer intent - Each value has a name describing what it represents.
+- Easier maintenance - Adding new values does not require changing the order of arguments.
+- Better autocomplete - Luau can provide the exact fields available when using a packet.
+- Safer refactoring - Renaming or moving fields is easier than tracking positional arguments.
+
+For example, a packet using positional arguments can become unclear:
+```lua
+SendMessage("Hello", 123)
+```
+
+The developer must remember what each value represents.
+
+With Packeteer:
+```lua
+SendMessage({
+	message = "Hello",
+	playerId = 123
+})
+```
+The structure of the data is immediately visible.
+
+This design follows Packeteer's goal of making networking code explicit, readable, and type-safe.

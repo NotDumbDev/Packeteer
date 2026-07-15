@@ -1,0 +1,86 @@
+---
+title: Getting Started
+---
+
+Packeteer provides type-safe packets, promise-based remote functions, and a clean schema-driven networking API for Roblox developers.
+
+import { Card, CardGrid, Tabs, TabItem, LinkCard, Aside, LinkButton } from '@astrojs/starlight/components';
+
+<Aside type="note" title="Enable strict type checking">
+	For the best experience with Packeteer's type system, enable Luau strict mode
+	in scripts that interact with Packeteer.
+
+	Add `--!strict` at the top of your scripts:
+
+	```lua
+	--!strict
+
+	local Network = require(...)
+	```
+
+	This allows Luau to validate packet arguments, callback parameters, and return values.
+</Aside>
+
+<Card title="Installing Packeteer" icon="rocket">
+	<Tabs>
+		<TabItem label="Model">
+			<LinkCard 
+				title="Installation" 
+				description="Download the Packeteer Model" 
+				href="https://github.com/NotDumbDev/Packeteer/releases/tag/Release"
+			/>
+		</TabItem>
+
+		<TabItem label="Wally">
+			Packeteer currently does **not** support Wally.
+		</TabItem>
+	</Tabs>
+</Card>
+
+## Creating your Network Schema
+
+The schema is where you define all packets that can be sent between the server and client.
+
+When creating new module scripts containing schemas, it is recommended to put them all in a folder like "ReplicatedStorage/Networking/..."
+
+<Aside type={"caution"}>Module Scripts containing schemas must always return the schema and not anything else.</Aside>
+
+```lua
+local Packeteer = require(path.to.Packeteer)
+
+return Packeteer.create({
+	Server = {
+		ServerEvent = Packeteer.event<<{ message: string }>>(),
+		ServerFunction = Packeteer.packetFunction<<{ message: string }, { number: number }>>()
+	},
+
+	Client = {
+		ClientEvent = Packeteer.event<<{ message: string }>>()
+	},
+})
+
+```
+
+<LinkButton
+  href="../../reference/network-schema"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+>
+  Related: Understanding Network Schemas
+</LinkButton>
+
+The **Server** and **Client** sections define packet ownership:
+- **Server** packets are used for server -> client communication.
+- **Client** packets are used for client -> server communication.
+
+## Starting Packeteer
+
+Packeteer must be started on the **server** once using [initializeServer()](../../reference/packeteer/#initializeserver).
+
+```lua
+local Packeteer = require(path.to.Packeteer)
+local NetworkingFolder = game.ReplicatedStorage.Networking
+
+Packeteer.initializeServer(NetworkingFolder)
+```

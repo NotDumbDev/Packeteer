@@ -1,0 +1,36 @@
+---
+title: Packeteer
+description: A simple, yet powerfully typed networking library.
+template: splash # Remove or comment out this line to display the site sidebar on this page.
+hero:
+  tagline: Packeteer provides type-safe packets, promise-based remote functions, and a clean schema-driven networking API for Roblox developers.
+  image:
+    file: ../../assets/packety.png
+  actions:
+    - text: Get Started
+      link: quickstart/getting-started
+      icon: right-arrow
+---
+
+import { Card, CardGrid, Tabs, TabItem, LinkCard } from '@astrojs/starlight/components';
+
+<Card title="Installation" icon="add-document">
+	<Tabs>
+		<TabItem label="Model"> <LinkCard title="Installation" description="Download the Packeteer Model" href="https://github.com/NotDumbDev/Packeteer/releases/tag/Release"></LinkCard> </TabItem>
+		<TabItem label="Wally">Packeteer currently does **not** support Wally.</TabItem>
+	</Tabs>
+</Card>
+
+<CardGrid stagger>
+	<Card title="Typed" icon="seti:powershell">
+		Strong typing for every packet.
+	</Card>
+
+	<Card title="Simple" icon="pencil">
+		A small API surface with minimal boilerplate.
+	</Card>
+
+	<Card title="Fast" icon="rocket">
+		Built on top of Roblox's networking primitives.
+	</Card>
+</CardGrid>

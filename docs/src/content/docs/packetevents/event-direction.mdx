@@ -1,0 +1,77 @@
+---
+title: Understanding Event Direction
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Packet Events have a direction based on which side owns the packet in the schema.
+
+The side where the packet is defined is the side that owns and sends the event. The opposite side receives it.
+
+## Server-Owned Events
+
+Server-owned events are defined inside the `Server` section of your schema.
+
+```lua
+return Packeteer.create({
+	Server = {
+		OpenRewardMenu = Packeteer.event<<{
+			rewardId: number
+		}>>(),
+	},
+})
+```
+The server owns this event, meaning the communication direction is:
+
+`Server -> Client`
+
+### Server:
+```lua
+Network.Server.OpenRewardMenu:Fire(player, {
+	rewardId = 123
+})
+```
+
+### Client:
+```lua
+Network.Server.OpenRewardMenu:Connect(function(data)
+	print(data.rewardId)
+end)
+```
+
+## Client-Owned Events
+Client-owned events are defined inside the `Client` section of your schema.
+
+```lua
+return Packeteer.create({
+	Client = {
+		EquipItem = Packeteer.event<<{
+			itemId: string
+		}>>(),
+	},
+})
+```
+The client owns this event, meaning the communication direction is:
+
+`Server -> Client`
+
+### Client:
+```lua
+Network.Client.EquipItem:Fire(nil, {
+	itemId = "Sword"
+})
+```
+
+### Server:
+```lua
+Network.Client.EquipItem:Connect(function(player, data)
+	print(player.Name, data.itemId)
+end)
+```
+
+## Direction Summary:
+
+| Location | Sender | Receiver |
+|----------|--------|----------|
+| `Server` | Server | Client   |
+| `Client` | Client | Server   |

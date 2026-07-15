@@ -1,0 +1,41 @@
+---
+title: Errors and Promises
+---
+
+Packet Functions use Promises to handle asynchronous results and errors.
+
+## Successful Requests
+
+```lua
+Network.Server.RequestData:Invoke(nil, data):andThen(function(result)
+	print(result)
+end)
+```
+
+## Failed Requests
+If the callback throws an error, the Promise is rejected.
+
+Example:
+```lua
+Network.Server.RequestData:Invoke(nil, data):catch(function(err)
+	warn(err)
+end)
+```
+
+Server:
+```lua
+Network.Server.RequestData:SetCallback(function()
+	error("Something went wrong!")
+end)
+```
+
+The error is automatically forwarded back to the caller.
+
+## Cancelling Requests
+Promises can be cancelled:
+
+```lua
+local request = Network.Server.RequestData:Invoke(nil, data)
+
+request:cancel()
+```

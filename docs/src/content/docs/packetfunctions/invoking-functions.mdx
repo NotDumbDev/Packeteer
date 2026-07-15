@@ -1,0 +1,50 @@
+---
+title: Invoking Packet Functions
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Packet Functions return a Promise when invoked.
+
+This allows the caller to asynchronously wait for the response without blocking execution.
+
+## Invoking a Server Function
+
+Server-owned functions are invoked from the client.
+
+Example:
+
+```lua
+Network.Server.RequestData:Invoke(nil, {
+	id = 123
+}):andThen(function(result)
+	print(result.name)
+	print(result.score)
+end)
+```
+The Promise resolves when the server callback returns a value.
+
+## Invoking a Client Function
+Client-owned functions are invoked from the server.
+
+Example:
+
+```lua
+Network.Client.GetPing:Invoke(player):andThen(function(ping)
+	print(ping)
+end)
+```
+
+<Aside type={"caution"} title="Note"> 
+    Unlike [Packet Events](../../packetevents/firing-events), PacketFunctions at the moment do **not** support multiple players to be passed.
+</Aside>
+
+## Handling Results
+Since PacketFunctions use Promises, You can use Promise methods to handle results:
+```lua
+Network.Server.RequestData:Invoke(nil, data):andThen(function(result)
+    -- handle on success
+end):catch(function(err)
+    -- handle on error
+end)
+```

@@ -1,0 +1,78 @@
+---
+title: Listening to Packet Events
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Listening to a Packet Event allows you to run code whenever a packet is received.
+
+Packet Events use `:Connect()` to create listeners.
+
+## Connecting to Events
+
+Use `:Connect()` to listen for incoming events.
+
+Example:
+
+```lua
+Network.Server.OpenRewardMenu:Connect(function(data)
+	print(data.rewardId)
+end)
+```
+Whenever the event is fired, the callback will run with the received data.
+
+## Server Event Listeners
+Server-owned events are received by the client.
+
+Example schema:
+
+```lua
+Server = {
+	OpenRewardMenu = Packeteer.event<<{
+		rewardId: number
+	}>>(),
+}
+```
+Client:
+```lua
+Network.Server.OpenRewardMenu:Connect(function(data)
+	print("Opening reward menu:", data.rewardId)
+end)
+```
+The callback receives the exact data defined in the schema.
+
+## Client Event Listeners
+Client-owned events are received by the server.
+
+Example Schema:
+```lua
+Client = {
+	EquipItem = Packeteer.event<<{
+		itemId: string
+	}>>(),
+}
+```
+
+Server: 
+```lua
+Network.Client.EquipItem:Connect(function(player, data)
+	print(player.Name, "equipped", data.itemId)
+end)
+```
+
+When the server receives a client-owned event, Packeteer automatically provides the sending `Player` as the first callback argument.
+
+## Disconnecting Listeners
+`:Connect()` returns a [`RBXScriptConnection`](https://create.roblox.com/docs/reference/engine/datatypes/RBXScriptConnection).
+You can disconnect a listener when it is no longer needed.
+
+```lua
+local connection = Network.Server.OpenRewardMenu:Connect(function(data)
+	print(data.rewardId)
+end)
+
+connection:Disconnect()
+```
+Disconnecting a connection prevents the callback from running in the future.
+
+<Aside type={"tip"}> Always disconnect temporary listeners to avoid unnecessary connections remaining active. </Aside>

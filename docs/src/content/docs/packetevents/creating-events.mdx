@@ -1,0 +1,101 @@
+---
+title: Creating Packet Events
+
+---
+
+
+import { Card, CardGrid, Tabs, TabItem, LinkCard, Aside, LinkButton, Icon } from '@astrojs/starlight/components';
+
+**This page goes on a pretty vague explaination. For more in-depth information (Such as Event Directions) you can check out the other pages.**
+
+Packet Events are one-way communication packets that allow the server and client to send data without expecting a response.
+
+Unlike [Packet Functions](../../packetfunctions/creating-functions), Packet Events do not return a value. They are useful for actions such as opening UI, updating state, or notifying another side about something that happened.
+
+## Creating a Packet Event
+
+Packet Events are created inside a network schema using `Packeteer.event()`.
+
+```lua
+local Packeteer = require(path.to.Packeteer)
+
+return Packeteer.create({
+	Server = {
+		OpenRewardMenu = Packeteer.event<<{ rewardId: number }>>(),
+	},
+
+	Client = {
+		EquipItem = Packeteer.event<<{ itemId: string }>>(),
+	},
+})
+```
+
+The location of the event determines which side owns the packet:
+- Server packets are used for server -> client communication.
+- Client packets are used for client -> server communication.
+
+## Firing Events
+### Server Events
+Server-owned packets must be fired from the server.
+
+```lua
+Network.Server.OpenRewardMenu:Fire(player, {
+	rewardId = 123
+})
+```
+
+Then the client can listen for this event:
+
+```lua
+Network.Server.OpenRewardMenu:Connect(function(data)
+	print(data.rewardId)
+end)
+```
+
+### Client Events
+Client-owned events are fired from the client.
+
+```lua
+Network.Client.EquipItem:Fire(nil, {itemId = "Sword"})
+```
+
+Then the server can listen for this event:
+
+```lua
+Network.Client.EquipItem:Connect(function(player, data)
+	print(player.Name, data.itemId)
+end)
+```
+
+<Aside type="caution" title="Client Event Arguments">
+	Due to Luau's current type system limitations, client-owned events require
+	a `nil` placeholder as the first argument when firing.
+
+	Packeteer cannot automatically transform the event argument types based on
+	the direction of the packet like TypeScript-based networking libraries can.
+
+	```lua
+	Network.Client.EquipItem:Fire(nil, {
+		itemId = "Sword"
+	})
+	```
+
+	The server will still receive the sending `Player` automatically:
+
+	```lua
+	Network.Client.EquipItem:Connect(function(player, data)
+		print(player.Name, data.itemId)
+	end)
+	```
+</Aside>
+## Connecting Events
+Use `:Connect()` to listen for incoming packets.
+
+```lua
+Network.Server.OpenRewardMenu:Connect(function(data)
+	print(data.rewardId)
+end)
+```
+<Aside>
+`:Connect()` returns a [`RBXScriptConnection`](https://create.roblox.com/docs/reference/engine/datatypes/RBXScriptConnection) so you can disconnect it at any time.
+</Aside>

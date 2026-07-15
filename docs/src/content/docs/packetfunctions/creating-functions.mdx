@@ -1,0 +1,45 @@
+---
+title: Creating Packet Functions
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+**This page goes on a pretty vague explaination. For more in-depth information (Such as Event Directions) you can check out the other pages.**
+
+Packet Functions allow the server and client to send a request and receive a response.
+
+Unlike Packet Events, Packet Functions are two-way communication packets. The caller waits for the receiver to process the request and return a value.
+
+## Creating a Packet Function
+
+Packet Functions are created inside a network schema using `Packeteer.packetFunction()`.
+
+```lua
+local Packeteer = require(path.to.Packeteer)
+
+return Packeteer.create({
+	Server = {
+		RequestData = Packeteer.packetFunction<<>
+			{ id: number }, -- T
+			{ name: string, score: number} -- R
+		>>(),
+	},
+
+	Client = {
+		GetPing = Packeteer.packetFunction<<>
+			{}, -- T
+			number -- R
+		>>(),
+	},
+})
+```
+
+- The first generic type ("T") defines the arguments sent with the request.
+- The second generic type ("R") defines the value returned by the callback.
+
+## Function Ownership
+Similar to [Packet Events](../../packetevents/creating-events): 
+The location of the function determines who can invoke it:
+- Server-owned functions are invoked by the client and handled by the server.
+- Client-owned functions are invoked by the server and handled by the client.
+
